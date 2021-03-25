@@ -1,0 +1,516 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<!-- Meta -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="description" content="Somos uma agência de comunicação digital completa, que atua desde a criação de logotipos de seus clientes às ações de  sites. Author: Valdeir Santana">
+	<meta name="keywords" content="valdeir santana, desenvolvimento de sites,  programador freelance, designer freelance, criação loja virtual, profissional php, ecommerce, e-commerce, opencart">
+	<meta name="author" content="Valdeir Santana">
+	
+	<!-- Title -->
+	<title>{Title} - Eespecializado em fazer lojas virtuais modular</title>
+	
+	<!-- CSS -->
+	<link href="http://razekproducoes.com.br/valdeir/css/960.css" rel="stylesheet" media="all" />
+	<link href="http://razekproducoes.com.br/valdeir/css/reset.css" rel="stylesheet" media="all" />
+	<link href="http://razekproducoes.com.br/valdeir/css/stylesheet.css" rel="stylesheet" media="all" />
+	<link href="http://razekproducoes.com.br/valdeir/css/bootstrap.css" rel="stylesheet" media="all" />
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,700,300' rel='stylesheet' type='text/css'>
+	
+	<!-- Javascript -->
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript" src="http://razekproducoes.com.br/valdeir/js/jquery.simplemodal.js"></script>
+	<script type="text/javascript" src="http://razekproducoes.com.br/valdeir/js/jquery.cycle.all.js"></script>
+	<script type="text/javascript" src="http://razekproducoes.com.br/valdeir/js/twitter-bootstrap-hover-dropdown.js"></script>
+	<script type="text/javascript" src="http://razekproducoes.com.br/valdeir/js/bootstrap.js"></script>
+	
+	<!-- Google Analytics -->
+	<script type="text/javascript">
+
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-28931471-4']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+
+	</script>
+	
+	<!-- Common -->
+	<script>
+		jQuery(function (){
+			var countGallery = 1;
+			var countContent = 1;
+			
+			var parameterURL = window.location.pathname.split('/');
+			
+			$.ajax({
+				url: 'http://api.tumblr.com/v2/blog/valdeirpsr.tumblr.com/posts/photo?api_key=jFqe9c3aJ5E7U6lZmLkSgT4wFcNmyV1EXTNfqwbabZyLTxEDdm&tag=destaque&limit=4',
+				type: 'GET',
+				dataType: 'jsonp',
+				success: function(data) {
+					for(i = 0; i <= 4; i++){
+						var dados = data.response.posts[i];
+						Image  = '<div class="gallery-image">';
+						Image +=		'<img src="' + dados.photos[0].original_size.url + '" alt="' + dados.slug.replace(/-/g," ") + '" title="' + dados.slug.replace("-"," ")  + '"/>';
+						Image +=	'</div>';
+						
+						Thumbs  = '<li><img src="' + dados.photos[0].alt_sizes[3].url + '" alt="' + dados.slug.replace(/-/g," ") + '" title="' + dados.slug.replace("-"," ")  + '"/></li>';
+						
+						$(Image).appendTo('#gallery-image-full');
+						$(Thumbs).appendTo('#gallery-thumbs');
+						
+						$('#gallery #gallery-image-full').cycle({
+							next:'.gallery-control-next',
+							prev:'.gallery-control-previous',
+							pager:  '#gallery-thumbs',
+							pagerAnchorBuilder: function(idx, slide) { 
+								return '#gallery-thumbs li:eq(' + idx + ') img'; 
+							},
+							timeout:5000
+						});
+					}
+				}
+			});
+			
+			if (parameterURL[1] == 'post'){
+				$('#gallery').remove();
+				
+				$.ajax({
+					url: 'http://api.tumblr.com/v2/blog/valdeirsantana.com.br/posts?id=' + parameterURL[2] + '&api_key=jFqe9c3aJ5E7U6lZmLkSgT4wFcNmyV1EXTNfqwbabZyLTxEDdm',
+					type: 'GET',
+					dataType: 'jsonp',
+					success: function(data) {
+						for(i = 0; i <= 7; i++){
+							var dados = data.response.posts[i];
+							Content  = '<img src="' + dados.photos[0].original_size.url + '" data-postID="' + dados.id + '" data-reblog_key="' + dados.reblog_key + '" alt="' + dados.slug.replace(/-/g," ") + '" title="' + dados.slug.replace(/-/g," ")  + '" />';
+							Content += '<p>' + dados.caption + '</p>';
+							Content += '<small>Via: <a href="' + dados.source_url + '" title="' + dados.source_title + '">' + dados.source_title + '</a></small>';
+							$("#content-images .pagination").before(Content);
+							//$(Content).appendTo('#content-images');
+						}
+						imageHover();
+					}
+				});
+				
+				$('#content-images').append();
+			}else if (parameterURL[1] != 'tema'){
+				
+				urlOffset = window.location.pathname.split('/');
+				if ($.isNumeric(urlOffset[2])){
+					offset = urlOffset[2] * 4;
+				}else{
+					offset = 0;
+				}
+				
+				$.ajax({
+					url: 'http://api.tumblr.com/v2/blog/valdeirpsr.tumblr.com/posts/photo?api_key=jFqe9c3aJ5E7U6lZmLkSgT4wFcNmyV1EXTNfqwbabZyLTxEDdm&tag=content&limit=8&offset=' + offset,
+					type: 'GET',
+					dataType: 'jsonp',
+					success: function(data) {
+						for(i = 0; i <= 7; i++){
+							var dados = data.response.posts[i];
+							Content  = '<div class="grid_3">';
+							Content += '	<div class="content-image">';
+							Content += '		<img src="' + dados.photos[0].original_size.url + '" data-postID="' + dados.id + '" data-reblog_key="' + dados.reblog_key + '" alt="' + dados.slug.replace(/-/g," ") + '" title="' + dados.slug.replace(/-/g," ")  + '" />';
+							Content += '		<span title="Zoom">val</span>';
+							Content += '	</div>';
+							Content += '</div>';
+							$("#content-images .pagination").before(Content);
+							//$(Content).appendTo('#content-images');
+						}
+						imageHover();
+					}
+				});
+			}
+			
+			if (parameterURL[1] == 'tema'){
+				
+				$.ajax({
+					url: 'http://api.tumblr.com/v2/blog/valdeirsantana.com.br/posts/photo?tag=' + parameterURL[2] + '&api_key=jFqe9c3aJ5E7U6lZmLkSgT4wFcNmyV1EXTNfqwbabZyLTxEDdm',
+					type: 'GET',
+					dataType: 'jsonp',
+					success: function(data) {
+						for(i = 0; i <= 7; i++){
+							var dados = data.response.posts[i];
+							Content  = '<div class="grid_3">';
+							Content += '	<div class="content-image">';
+							Content += '		<img src="' + dados.photos[0].original_size.url + '" data-postID="' + dados.id + '" data-reblog_key="' + dados.reblog_key + '" alt="' + dados.slug.replace(/-/g," ") + '" title="' + dados.slug.replace(/-/g," ")  + '" />';
+							Content += '		<span title="Zoom"><span>';
+							Content += '	</div>';
+							Content += '</div>';
+							$("#content-images .pagination").before(Content);
+							//$(Content).appendTo('#content-images');
+							imageHover();
+						}
+						$(".nav li").removeClass('menu-active');
+						$("#mPortfolio").addClass('menu-active');
+					}
+				});
+				
+			}
+			
+			/* Scroll (Botão Topo) */
+			$(window).scroll(function(){
+				if ($(window).scrollTop() >= 240){
+					$('.icon-up').fadeIn('slow');
+				}else{
+					$('.icon-up').fadeOut('slow');
+				}
+			});
+			
+			/* Botão Topo (Ação) */
+			$('.icon-up').click(function (){
+				$('html, body').animate({
+					scrollTop:0
+				});
+			});
+			
+			/* Menu */
+			$('.social_network_top .grid_1, .social_network_bottom .grid_1').hover(function (){
+				$(this).find('a').animate({
+					backgroundPositionY: 0
+				}, '1');
+			}, function (){
+				$(this).find('a').animate({
+					backgroundPositionY: -29
+				}, '200');
+			});
+			
+			/* Cycle */			
+			$('#gallery #gallery-image-full').cycle({
+				next:'.gallery-control-next',
+				prev:'.gallery-control-previous',
+				pager:  '#gallery-thumbs',
+				pagerAnchorBuilder: function(idx, slide) { 
+					return '#gallery-thumbs li:eq(' + idx + ') img'; 
+				},
+				timeout:5000
+			});
+			
+		});
+		
+		function imageHover(){
+			/* Content-Image - Inicio */
+			$("#content-images .content-image").hover(function (){
+				s$(this).find('span').fadeIn('slow');
+			}, function (){
+				$(this).find('span').fadeOut();
+			});
+			
+			/* Modal - Inicio */
+			$('#content-images .content-image').click(function(){
+				//Cachea o elemento img
+				var e = $(this).find('img');
+				
+				//Html Imagem
+				image = '<img src="' + e.attr('src') + '" />';
+				
+				//Html reblog
+				reblog = '<a href="http://www.tumblr.com/reblog/' + e.attr('data-postID') + '/' + e.attr('data-reblog_key') + '" class="reblog" title="Reblogar"></a>';
+				
+				//Html like
+				like = '<a href="#" data-reblog_key="' + e.attr('data-reblog_key') + '" data-postid="' + e.attr('data-postID') + '" class="like" title="Gostar"></a>';
+				
+				//Carrega o modal
+				$.modal('<div class="optPost">' + reblog + like + '</div>' + image, {
+					closeClase:'modalClose',
+					CloseHTML:'<a href="#">Close</a>',
+					opacity:90,
+					overlayCss: {backgroundColor:'#000'},
+					onClose: function (dialog){
+						dialog.data.fadeOut('fast', function(){
+							dialog.container.fadeOut('fast', function(){
+								dialog.overlay.fadeOut('fast', function(){
+									$.modal.close();
+								})
+							});
+						});
+					},
+					onOpen: function (dialog){
+						dialog.overlay.fadeIn('', function(){
+							dialog.container.fadeIn('', function(){
+								dialog.data.fadeIn('', function(){
+									//Like
+									$('.like').click(function(){
+										//Cachea o elemento .like
+										var e = $(this);
+										
+										//Captura o reblog_key
+										var reblog = e.attr('data-reblog_key');
+										
+										//Captura o id do post
+										var id = e.attr('data-postid');
+										
+										//Verifica se existe a class .like-active
+										if (e.hasClass('like-active')){
+											//Descurte e remove a class .like-active
+											var urlLike = 'http://www.tumblr.com/unlike/' + reblog + '?id=' + id;
+											$(this).removeClass('like-active');
+										}else{
+											//Curte e adiciona a class .like-active
+											var urlLike = 'http://www.tumblr.com/like/' + reblog + '?id=' + id;
+											$(this).addClass('like-active');
+										}
+										$('#likeit').attr('src', urlLike); 
+										return false;
+									});
+									//Like - Fim
+								})
+							});
+						});
+					},
+					containerCss:{
+						borderColor:'#FFF'
+					}
+				});
+			});
+			/* Modal - Fim */			
+			/* Content-Image - Fim */
+			
+			$('#tumblr_controls').css({
+				position:'fixed'
+			});
+		}
+	</script>
+	<!-- /Common -->
+	
+	<!-- Custom CSS -->
+	<style>{CustomCSS}</style>
+</head>
+
+<body>
+	
+	<aside id="wrapper">
+		
+		<!-- Social Network Top -->
+		<nav class="social_network_top">
+			<div class="container_12">
+				
+				<!-- Facebook -->
+				<div class="grid_1 prefix_7">
+					<a href="//fb.com/valdeirpsr" class="icon icon-facebook" title="Facebook"></a>
+				</div>
+				
+				<!-- Twitter -->
+				<div class="grid_1">
+					<a href="//twitter.com/valdeirpsr" class="icon icon-twitter" title="Twitter"></a>
+				</div>
+				
+				<!-- Orkut -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-orkut" title="Orkut"></a>
+				</div>
+				
+				<!-- Rss -->
+				<div class="grid_1">
+					<a href="{RSS}" class="icon icon-rss" title="Feed RSS"></a>
+				</div>
+				
+				<!-- G+ -->
+				<div class="grid_1">
+					<a href="//plus.google.com/116424284812934958086" class="icon icon-gplus" title="Google Plus"></a>
+				</div>
+			</div>
+		</nav>
+		<!-- /Social_Network_Top -->
+	</aside>
+	
+	<aside>
+		<!-- Header -->
+		<header id="header">
+			<div class="container_12">
+				<!-- Logo -->
+				<div class="grid_3 logo">
+					<h1>
+						<a href="http://www.valdeirsantana.com.br" title="{Title}">
+							<img src="http://razekproducoes.com.br/valdeir/img/logo.png" alt="{Title}" title="{Title}" />
+						</a>
+					</h1>
+				</div>
+				<!-- /Logo -->
+				
+				<!-- Menu -->
+				<nav class="grid_7 omega nav">
+					<ul class="omega">
+						<li class="grid_1 menu-active"><a href="home" title="Home">Home</a></li>
+						<li class="grid_1 dropdown">
+							<a class="dropdown-toggle" id="mPortfolio" role="button" data-toggle="dropdown" data-target="#" href="#" title="Portfolio">Portfolio</a>
+							<ul class="dropdown-menu" role="menu" aria-labelledby="mPortfolio">
+								{block:HasPages}
+									{block:Pages}
+										<li role="menuitem"><a href="{URL}" title="{Label}">{Label}</a></li>
+									{/block:Pages}
+								{/block:HasPages}
+							</ul>
+						</li>
+						<li class="grid_1"><a href="blog" title="Blog">Blog</a></li>
+						<li class="grid_1"><a href="contato" title="Contato">Contato</a></li>
+					</ul>
+				</nav>
+			</div>
+		</header>
+		<!-- /Header -->
+	</aside>
+	
+	<aside>	
+		<!-- Gallery -->
+		<section>
+			<div id="gallery">
+			
+				<!-- Gallery-Image-Full -->
+				<div id="gallery-image-full"></div>		
+				
+				<!-- Gallery-Controls -->
+				<div id="gallery-controls">
+					<div class="gallery-control-previous"></div>
+					<div class="gallery-control-next"></div>
+				</div>
+				<!-- /Gallery-Controls -->
+				
+				<!-- Gallery-Thumbs -->
+				<ul id="gallery-thumbs"></ul>
+			</div>
+		</section>
+		<!--  /Gallery -->
+	</aside>
+		
+	<aside>
+		<!-- .Container_12 -->
+		<div class="container_12">
+			
+			<!-- Separador -->
+			<hr/>
+			
+			<!-- Content-Images -->
+			<section>
+				<div id="content-images">		
+				
+					<div class="pagination">
+						<ul>
+							{block:Pagination}
+								{block:PreviousPage}
+									<li><a href="{PreviousPage}" title="Anterior"><-- Anterior</a></li>
+								{/block:PreviousPage}
+								
+								{block:NextPage}
+									<li><a href="{NextPage}" title="Próximo">Próximo --></a></li>
+								{/block:NextPage}
+							{/block:Pagination}
+						</ul>
+					</div>
+				</div>
+			</section>
+			<!-- /Content-Images -->
+			
+			<hr/>
+			<!-- Content-Texts -->
+			<div id="content-texts">
+				<article>
+					<div class="grid_4">
+						<span class="icon icon-config"></span>
+						<h3><strong>VALID XHTML 1.0</strong></h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+					</div>
+				</article>
+				
+				<article>
+					<div class="grid_4">
+						<span class="icon icon-image"></span>
+						<h3><strong>MULTIPLE PORTFOLIOS</strong></h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+					</div>
+				</article>
+				
+				<article>
+					<div class="grid_4">
+						<span class="icon icon-mail"></span>
+						<h3><strong>JQUERY CONTACT FORM</strong></h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+					</div>
+				</article>
+				
+				<article>
+					<div class="grid_4">
+						<span class="icon icon-edit"></span>
+						<h3><strong>MARKETING</strong></h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+					</div>
+				</article>
+				
+				<article>
+					<div class="grid_4">
+						<span class="icon icon-people"></span>
+						<h3><strong>GREAT SUPPORT</strong></h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+					</div>
+				</article>
+				
+				<article>
+					<div class="grid_4">
+						<span class="icon icon-tag"></span>
+						<h3><strong>SEO</strong></h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+					</div>
+				</article>
+			</div>
+			<!-- /Content-Texts -->
+		</div>
+		<!-- /Container_12 -->
+	</aside>
+	
+	<aside>
+		<!-- Footer -->
+		<footer id="footer">
+			<nav class="social_network_bottom container_12">
+				<!-- Facebook -->
+				<div class="grid_1 prefix_4">
+					<a href="http://fb.com/valdeirpsr" class="icon icon-facebook" title="Facebook"></a>
+				</div>
+				
+				<!-- Twitter -->
+				<div class="grid_1">
+					<a href="http://twitter.com/valdeirpsr" class="icon icon-twitter" title="Twitter"></a>
+				</div>
+				
+				<!-- Orkut -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-orkut" title="Orkut"></a>
+				</div>
+				
+				<!-- Rss -->
+				<div class="grid_1">
+					<a href="{RSS}" class="icon icon-rss" title="Feed RSS"></a>
+				</div>
+				
+				<!-- G+ -->
+				<div class="grid_1">
+					<a href="http://plus.google.com/116424284812934958086" class="icon icon-gplus" title="Google Plus"></a>
+				</div>
+				
+				<div class="grid_12">
+					<small>Copyright &copy; - 2013 - Valdeir S.</small>
+				</div>
+			</nav>
+		</footer>
+		<!-- /Footer -->
+		
+		<span class="icon icon-up"><br/><br/>Topo</span>
+		
+	</aside>
+	
+	<iframe id="likeit"></iframe>
+	
+	<script>
+		$(function(){
+			$('.dropdown-toggle').dropdownHover({
+				delay:2000,
+				instantlyCloseOthers: true
+			});
+		});
+	</script>
+</body>
+</html>

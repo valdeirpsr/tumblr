@@ -1,0 +1,261 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Valdeir WebDesign | Soluçao em criaçao de websites</title>
+	<link href="css/960.css" rel="stylesheet" media="all" />
+	<link href="css/reset.css" rel="stylesheet" media="all" />
+	<link href="css/stylesheet.css" rel="stylesheet" media="all" />
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,700,300' rel='stylesheet' type='text/css'>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.simplemodal.js"></script>
+	<script type="text/javascript" src="js/jquery.cycle.all.js"></script>
+	<script>
+		jQuery(function (){		
+			/* Scroll (Botão Topo) */
+			$(window).scroll(function(){
+				if ($(window).scrollTop() >= 240){
+					$('.icon-up').fadeIn('slow');
+				}else{
+					$('.icon-up').fadeOut('slow');
+				}
+			});
+			
+			/* Botão Topo (Ação) */
+			$('.icon-up').click(function (){
+				$('html, body').animate({
+					scrollTop:0
+				});
+			});
+			
+			/* Content-Image - Inicio */
+			$("#content-images .content-image").hover(function (){
+				$(this).find('span').fadeIn('slow');
+			}, function (){
+				$(this).find('span').fadeOut();
+			});
+			
+			/* Modal - Inicio */
+			$('#content-images .content-image').click(function(){
+				urlImage = $(this).find('img').attr('src');
+				$.modal('<img src="'+urlImage+'" />', {
+					closeClase:'modalClose',
+					CloseHTML:'<a href="#">Close</a>',
+					opacity:90,
+					overlayCss: {backgroundColor:'#000'},
+					onClose: function (dialog){
+						dialog.data.fadeOut('fast', function(){
+							dialog.container.fadeOut('fast', function(){
+								dialog.overlay.fadeOut('fast', function(){
+									$.modal.close();
+								})
+							});
+						});
+					},
+					onOpen: function (dialog){
+						dialog.overlay.fadeIn('', function(){
+							dialog.container.fadeIn('', function(){
+								dialog.data.fadeIn('')
+							});
+						});
+					},
+					containerCss:{
+						borderColor:'#FFF'
+					}
+				});
+			});
+			/* Modal - Fim */
+			/* Content-Image - Fim */
+			
+			/* Cycle */
+			$('#gallery #gallery-thumbs li').hover(function(){
+				//alert($(this).find('img').attr('src'));
+				$(this).css({
+					borderTopWith:3
+				});
+			});
+			
+			$('#gallery #gallery-image-full').cycle({
+				next:'.gallery-control-next',
+				prev:'.gallery-control-previous',
+				pager:  '#gallery-thumbs',
+				pagerAnchorBuilder: function(idx, slide) { 
+					return '#gallery-thumbs li:eq(' + idx + ') img'; 
+				}
+			});
+			
+			/* Menu */
+			$('.social_network_top .grid_1, .social_network_bottom .grid_1').hover(function (){
+				$(this).find('a').animate({
+					backgroundPositionY: 0
+				}, '1');
+			}, function (){
+				$(this).find('a').animate({
+					backgroundPositionY: -29
+				}, '200');
+			});
+		});
+	</script>
+</head>
+
+<body>
+	
+	<div id="wrapper">
+		
+		<!-- Social Network Top -->
+		<div class="social_network_top">
+			<div class="container_12">
+				
+				<!-- Facebook -->
+				<div class="grid_1 prefix_7">
+					<a href="#" class="icon icon-facebook"></a>
+				</div>
+				
+				<!-- Twitter -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-twitter"></a>
+				</div>
+				
+				<!-- Orkut -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-orkut"></a>
+				</div>
+				
+				<!-- Rss -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-rss"></a>
+				</div>
+				
+				<!-- G+ -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-gplus"></a>
+				</div>
+			</div>
+		</div>
+		<!-- /Social_Network_Top -->
+		
+		<!-- Header -->
+		<div id="header">			
+			<div class="container_12">
+				<!-- Logo -->
+				<div class="grid_3 logo"><img src="img/logo.png" /></div>
+				
+				<!-- Menu -->
+				<div class="grid_7 omega nav">
+					<ul class="omega">
+						<li class="grid_1 menu-active"><a href="home" />Home</a></li>
+						<li class="grid_1"><a href="portfolio" />Portfolio</a></li>
+						<li class="grid_1"><a href="blog" />Blog</a></li>
+						<li class="grid_1"><a href="contato" />Contato</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- /Header -->
+		
+		<!-- .Container_12 -->
+		<div class="container_12">
+			
+			<!-- Content-Images -->
+			<div id="content-images">
+				<div class="grid_3">
+					<div class="content-image">
+						<img src="img/content-images/01.jpg" />
+						<span title="Zoom"><span>
+					</div>
+				</div>
+				
+				<div class="grid_3">
+					<div class="content-image">
+						<img src="img/content-images/01.jpg" />
+						<span title="Zoom"><span>
+					</div>
+				</div>
+				
+				<div class="grid_3">
+					<div class="content-image">
+						<img src="img/content-images/01.jpg" />
+						<span title="Zoom"><span>
+					</div>
+				</div>
+				
+				<div class="grid_3">
+					<div class="content-image">
+						<img src="img/content-images/01.jpg" />
+						<span title="Zoom"><span>
+					</div>
+				</div>
+				
+				<div class="grid_3">
+					<div class="content-image">
+						<img src="img/content-images/01.jpg" />
+						<span title="Zoom"><span>
+					</div>
+				</div>
+				
+				<div class="grid_3">
+					<div class="content-image">
+						<img src="img/content-images/01.jpg" />
+						<span title="Zoom"><span>
+					</div>
+				</div>
+				
+				<div class="grid_3">
+					<div class="content-image">
+						<img src="img/content-images/01.jpg" />
+						<span title="Zoom"><span>
+					</div>
+				</div>
+				
+				<div class="grid_3">
+					<div class="content-image">
+						<img src="img/content-images/01.jpg" />
+						<span title="Zoom"><span>
+					</div>
+				</div>
+			</div>
+			<!-- /Content-Images -->
+		</div>
+		<!-- /Container_12 -->
+		
+		<!-- Footer -->
+		<div id="footer">
+			<div class="social_network_bottom container_12">
+				<!-- Facebook -->
+				<div class="grid_1 prefix_4">
+					<a href="#" class="icon icon-facebook"></a>
+				</div>
+				
+				<!-- Twitter -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-twitter"></a>
+				</div>
+				
+				<!-- Orkut -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-orkut"></a>
+				</div>
+				
+				<!-- Rss -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-rss"></a>
+				</div>
+				
+				<!-- G+ -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-gplus"></a>
+				</div>
+				
+				<div class="grid_12">
+					<small>Copyright &copy; - 2013 - Valdeir S.</small>
+				</div>
+			</div>
+		</div>
+		<!-- /Footer -->
+		
+		<span class="icon icon-up"><br/><br/>Topo</span>
+		
+	</div>
+	
+</body>
+</html>

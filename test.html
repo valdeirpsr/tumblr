@@ -1,0 +1,355 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>{Title}</title>
+	<link href="http://razekproducoes.com.br/valdeir/css/960.css" rel="stylesheet" media="all" />
+	<link href="http://razekproducoes.com.br/valdeir/css/reset.css" rel="stylesheet" media="all" />
+	<link href="http://razekproducoes.com.br/valdeir/css/stylesheet.css" rel="stylesheet" media="all" />
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,700,300' rel='stylesheet' type='text/css'>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript" src="http://razekproducoes.com.br/valdeir/js/jquery.simplemodal.js"></script>
+	<script type="text/javascript" src="http://razekproducoes.com.br/valdeir/js/jquery.cycle.all.js"></script>
+	<script  type="text/javascript"src="https://raw.github.com/desandro/imagesloaded/master/jquery.imagesloaded.js"></script>
+	<script>
+		jQuery(function (){
+			var countGallery = 1;
+			var countContent = 1;
+			
+			urlOffset = window.location.pathname.split('/');
+			if ($.isNumeric(urlOffset[2])){
+				offset = urlOffset[2] * 4;
+			}else{
+				offset = 0;
+			}
+			
+			$.ajax({
+					url: 'http://api.tumblr.com/v2/blog/valdeirpsr.tumblr.com/posts/photo?api_key=jFqe9c3aJ5E7U6lZmLkSgT4wFcNmyV1EXTNfqwbabZyLTxEDdm&tag=content&limit=8&offset=' + offset,
+					type: 'GET',
+					dataType: 'jsonp',
+					success: function(data) {
+						for(i = 0; i <= 7; i++){
+							var dados = data.response.posts[i];
+							Content  = '<div class="grid_3">';
+							Content += '	<div class="content-image">';
+							Content += '		<img src="' + dados.photos[0].original_size.url + '" data-postID="' + dados.id + '" data-reblog_key="' + dados.reblog_key + '" />';
+							Content += '		<span title="Zoom"><span>';
+							Content += '	</div>';
+							Content += '</div>';
+							$(Content).appendTo('#content-images');
+							imageHover();
+						}
+					}
+			});
+			
+			/* Scroll (Botão Topo) */
+			$(window).scroll(function(){
+				if ($(window).scrollTop() >= 240){
+					$('.icon-up').fadeIn('slow');
+				}else{
+					$('.icon-up').fadeOut('slow');
+				}
+			});
+			
+			/* Botão Topo (Ação) */
+			$('.icon-up').click(function (){
+				$('html, body').animate({
+					scrollTop:0
+				});
+			});
+			
+			/* Menu */
+			$('.social_network_top .grid_1, .social_network_bottom .grid_1').hover(function (){
+				$(this).find('a').animate({
+					backgroundPositionY: 0
+				}, '1');
+			}, function (){
+				$(this).find('a').animate({
+					backgroundPositionY: -29
+				}, '200');
+			});
+			
+			/* Cycle */			
+			$('#gallery #gallery-image-full').cycle({
+				next:'.gallery-control-next',
+				prev:'.gallery-control-previous',
+				pager:  '#gallery-thumbs',
+				pagerAnchorBuilder: function(idx, slide) { 
+					return '#gallery-thumbs li:eq(' + idx + ') img'; 
+				},
+				timeout:5000
+			});
+			
+		});
+		
+		function imageHover(){
+			/* Content-Image - Inicio */
+			$("#content-images .content-image").hover(function (){
+				$(this).find('span').fadeIn('slow');
+			}, function (){
+				$(this).find('span').fadeOut();
+			});
+			
+			/* Modal - Inicio */
+			$('#content-images .content-image').click(function(){
+				//Cachea o elemento img
+				var e = $(this).find('img');
+				
+				//Html Imagem
+				image = '<img src="' + e.attr('src') + '" />';
+				
+				//Html reblog
+				reblog = '<a href="http://www.tumblr.com/reblog/' + e.attr('data-postID') + '/' + e.attr('data-reblog_key') + '" class="reblog" title="Reblogar"></a>';
+				
+				//Html like
+				like = '<a href="#" data-reblog_key="' + e.attr('data-reblog_key') + '" data-postid="' + e.attr('data-postID') + '" class="like" title="Gostar"></a>';
+				
+				//Carrega o modal
+				$.modal('<div class="optPost">' + reblog + like + '</div>' + image, {
+					closeClase:'modalClose',
+					CloseHTML:'<a href="#">Close</a>',
+					opacity:90,
+					maxHeight:'90%',
+					maxWidth:'90%',
+					overlayCss: {backgroundColor:'#000'},
+					onClose: function (dialog){
+						dialog.data.fadeOut('fast', function(){
+							dialog.container.fadeOut('fast', function(){
+								dialog.overlay.fadeOut('fast', function(){
+									$.modal.close();
+								})
+							});
+						});
+					},
+					onOpen: function (dialog){
+						dialog.overlay.fadeIn('', function(){
+							dialog.container.fadeIn('', function(){
+								dialog.data.fadeIn('', function(){
+									//Like
+									$('.like').click(function(){
+										//Cachea o elemento .like
+										var e = $(this);
+										
+										//Captura o reblog_key
+										var reblog = e.attr('data-reblog_key');
+										
+										//Captura o id do post
+										var id = e.attr('data-postid');
+										
+										//Verifica se existe a class .like-active
+										if (e.hasClass('like-active')){
+											//Descurte e remove a class .like-active
+											var urlLike = 'http://www.tumblr.com/unlike/' + reblog + '?id=' + id;
+											$(this).removeClass('like-active');
+										}else{
+											//Curte e adiciona a class .like-active
+											var urlLike = 'http://www.tumblr.com/like/' + reblog + '?id=' + id;
+											$(this).addClass('like-active');
+										}
+										$('#likeit').attr('src', urlLike); 
+										return false;
+									});
+									//Like - Fim
+								})
+							});
+						});
+					},
+					containerCss:{
+						borderColor:'#FFF'
+					}
+				});
+			});
+			/* Modal - Fim */			
+			/* Content-Image - Fim */
+			
+			$('#content-images .grid_3 .content-image').imagesLoaded(function( $images, $proper, $broken ){
+
+    var $container = this,
+        x = 1;
+
+    $images.each( function() {
+        var $this = $(this).css({ left: x });
+        x += $this.width() + 1;
+    });
+
+    $container.width(x);
+
+});
+			
+		}
+	</script>
+	<style>{CustomCSS}</style>
+</head>
+
+<body>
+	
+	<div id="wrapper">
+		
+		<!-- Social Network Top -->
+		<div class="social_network_top">
+			<div class="container_12">
+				
+				<!-- Facebook -->
+				<div class="grid_1 prefix_7">
+					<a href="//fb.com/valdeirpsr" class="icon icon-facebook"></a>
+				</div>
+				
+				<!-- Twitter -->
+				<div class="grid_1">
+					<a href="//twitter.com/valdeirpsr" class="icon icon-twitter"></a>
+				</div>
+				
+				<!-- Orkut -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-orkut"></a>
+				</div>
+				
+				<!-- Rss -->
+				<div class="grid_1">
+					<a href="{RSS}" class="icon icon-rss"></a>
+				</div>
+				
+				<!-- G+ -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-gplus"></a>
+				</div>
+			</div>
+		</div>
+		<!-- /Social_Network_Top -->
+		
+		<!-- Header -->
+		<div id="header">			
+			<div class="container_12">
+				<!-- Logo -->
+				<div class="grid_3 logo"><a href="http://www.valdeirsantana.com.br"><img src="http://razekproducoes.com.br/valdeir/img/logo.png" /></a></div>
+				
+				<!-- Menu -->
+				<div class="grid_7 omega nav">
+					<ul class="omega">
+						<li class="grid_1 menu-active"><a href="home" />Home</a></li>
+						<li class="grid_1"><a href="portfolio" />Portfolio</a></li>
+						<li class="grid_1"><a href="blog" />Blog</a></li>
+						<li class="grid_1"><a href="contato" />Contato</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- /Header -->
+		
+		<!-- Gallery -->
+		<div id="gallery">
+		
+			<!-- Gallery-Image-Full -->
+			<div id="gallery-image-full"></div>		
+			
+			<!-- Gallery-Controls -->
+			<div id="gallery-controls">
+				<div class="gallery-control-previous"></div>
+				<div class="gallery-control-next"></div>
+			</div>
+			<!-- /Gallery-Controls -->
+			
+			<!-- Gallery-Thumbs -->
+			<ul id="gallery-thumbs"></ul>
+		</div>
+		<!--  /Gallery -->
+		
+		<!-- .Container_12 -->
+		<div class="container_12">
+			
+			<!-- Separador -->
+			<hr/>
+			
+			<!-- Content-Images -->
+			<div id="content-images">		
+			
+				<a href="{PreviousPage}"><-- Anterior | </a>
+				
+				<a href="{NextPage}">Próximo --></a>
+			</div>
+			<!-- /Content-Images -->
+			
+			<hr/>
+			<!-- Content-Texts -->
+			<div id="content-texts">
+				<div class="grid_4">
+					<span class="icon icon-config"></span>
+					<h3>VALID XHTML 1.0</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+				</div>
+				
+				<div class="grid_4">
+					<span class="icon icon-image"></span>
+					<h3>MULTIPLE PORTFOLIOS</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+				</div>
+				
+				<div class="grid_4">
+					<span class="icon icon-mail"></span>
+					<h3>JQUERY CONTACT FORM</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+				</div>
+				
+				<div class="grid_4">
+					<span class="icon icon-edit"></span>
+					<h3>MARKETING</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+				</div>
+				
+				<div class="grid_4">
+					<span class="icon icon-people"></span>
+					<h3>GREAT SUPPORT</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+				</div>
+				
+				<div class="grid_4">
+					<span class="icon icon-tag"></span>
+					<h3>SEO</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisscing elit. Proin vel lectus ut mauris convallis lacinia dapibu sit amet neque. Praesent scelerisque tellus sit ameti.</p>
+				</div>
+			</div>
+			<!-- /Content-Texts -->
+		</div>
+		<!-- /Container_12 -->
+		
+		<!-- Footer -->
+		<div id="footer">
+			<div class="social_network_bottom container_12">
+				<!-- Facebook -->
+				<div class="grid_1 prefix_7">
+					<a href="//fb.com/valdeirpsr" class="icon icon-facebook"></a>
+				</div>
+				
+				<!-- Twitter -->
+				<div class="grid_1">
+					<a href="//twitter.com/valdeirpsr" class="icon icon-twitter"></a>
+				</div>
+				
+				<!-- Orkut -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-orkut"></a>
+				</div>
+				
+				<!-- Rss -->
+				<div class="grid_1">
+					<a href="{RSS}" class="icon icon-rss"></a>
+				</div>
+				
+				<!-- G+ -->
+				<div class="grid_1">
+					<a href="#" class="icon icon-gplus"></a>
+				</div>
+				
+				<div class="grid_12">
+					<small>Copyright &copy; - 2013 - Valdeir S.</small>
+				</div>
+			</div>
+		</div>
+		<!-- /Footer -->
+		
+		<span class="icon icon-up"><br/><br/>Topo</span>
+		
+	</div>
+	<iframe src="" id="likeit"></iframe>
+</body>
+</html>
